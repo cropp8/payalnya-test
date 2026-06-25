@@ -2,21 +2,197 @@
   "projects": [
     {
       "id": 1,
-      "name": "Example Project",
-      "descripton": "First task to try and get a feel of this app.",
-      "taskCount": 0,
+      "name": "Project Alpha",
+      "descripton": "Lorem ipsum dolor sit amet.",
+      "taskCount": 5,
       "status": "active",
-      "createdAt": ""
+      "createdAt": "2026-06-20T10:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "name": "Project Beta",
+      "descripton": "Consectetur adipiscing elit.",
+      "taskCount": 5,
+      "status": "active",
+      "createdAt": "2026-06-21T10:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "name": "Project Gamma",
+      "descripton": "Sed do eiusmod tempor.",
+      "taskCount": 5,
+      "status": "completed",
+      "createdAt": "2026-06-22T10:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "name": "Project Delta",
+      "descripton": "Ut labore et dolore.",
+      "taskCount": 5,
+      "status": "active",
+      "createdAt": "2026-06-23T10:00:00.000Z"
     }
   ],
   "tasks": [
     {
       "id": 1,
       "projectId": 1,
-      "title": "First Task",
+      "title": "Task A1",
+      "assignee": "User 1",
+      "status": "todo",
+      "dueDate": "2026-07-01T17:49:36.328Z"
+    },
+    {
+      "id": 2,
+      "projectId": 1,
+      "title": "Task A2",
+      "assignee": null,
+      "status": "in-progress",
+      "dueDate": "2026-07-02T17:49:36.328Z"
+    },
+    {
+      "id": 3,
+      "projectId": 1,
+      "title": "Task A3",
+      "assignee": "User 2",
+      "status": "done",
+      "dueDate": "2026-07-03T17:49:36.328Z"
+    },
+    {
+      "id": 4,
+      "projectId": 1,
+      "title": "Task A4",
       "assignee": null,
       "status": "todo",
-      "dueDate": ""
+      "dueDate": "2026-07-04T17:49:36.328Z"
+    },
+    {
+      "id": 5,
+      "projectId": 1,
+      "title": "Task A5",
+      "assignee": "User 1",
+      "status": "todo",
+      "dueDate": "2026-07-05T17:49:36.328Z"
+    },
+    {
+      "id": 6,
+      "projectId": 2,
+      "title": "Task B1",
+      "assignee": null,
+      "status": "todo",
+      "dueDate": "2026-07-06T17:49:36.328Z"
+    },
+    {
+      "id": 7,
+      "projectId": 2,
+      "title": "Task B2",
+      "assignee": "User 3",
+      "status": "in-progress",
+      "dueDate": "2026-07-07T17:49:36.328Z"
+    },
+    {
+      "id": 8,
+      "projectId": 2,
+      "title": "Task B3",
+      "assignee": null,
+      "status": "todo",
+      "dueDate": "2026-07-08T17:49:36.328Z"
+    },
+    {
+      "id": 9,
+      "projectId": 2,
+      "title": "Task B4",
+      "assignee": "User 3",
+      "status": "done",
+      "dueDate": "2026-07-09T17:49:36.328Z"
+    },
+    {
+      "id": 10,
+      "projectId": 2,
+      "title": "Task B5",
+      "assignee": null,
+      "status": "todo",
+      "dueDate": "2026-07-10T17:49:36.328Z"
+    },
+    {
+      "id": 11,
+      "projectId": 3,
+      "title": "Task C1",
+      "assignee": "User 2",
+      "status": "done",
+      "dueDate": "2026-07-11T17:49:36.328Z"
+    },
+    {
+      "id": 12,
+      "projectId": 3,
+      "title": "Task C2",
+      "assignee": null,
+      "status": "done",
+      "dueDate": "2026-07-12T17:49:36.328Z"
+    },
+    {
+      "id": 13,
+      "projectId": 3,
+      "title": "Task C3",
+      "assignee": "User 1",
+      "status": "done",
+      "dueDate": "2026-07-13T17:49:36.328Z"
+    },
+    {
+      "id": 14,
+      "projectId": 3,
+      "title": "Task C4",
+      "assignee": null,
+      "status": "done",
+      "dueDate": "2026-07-14T17:49:36.328Z"
+    },
+    {
+      "id": 15,
+      "projectId": 3,
+      "title": "Task C5",
+      "assignee": "User 2",
+      "status": "done",
+      "dueDate": "2026-07-15T17:49:36.328Z"
+    },
+    {
+      "id": 16,
+      "projectId": 4,
+      "title": "Task D1",
+      "assignee": null,
+      "status": "todo",
+      "dueDate": "2026-07-16T17:49:36.328Z"
+    },
+    {
+      "id": 17,
+      "projectId": 4,
+      "title": "Task D2",
+      "assignee": "User 4",
+      "status": "todo",
+      "dueDate": "2026-07-17T17:49:36.328Z"
+    },
+    {
+      "id": 18,
+      "projectId": 4,
+      "title": "Task D3",
+      "assignee": null,
+      "status": "in-progress",
+      "dueDate": "2026-07-18T17:49:36.328Z"
+    },
+    {
+      "id": 19,
+      "projectId": 4,
+      "title": "Task D4",
+      "assignee": "User 4",
+      "status": "todo",
+      "dueDate": "2026-07-19T17:49:36.328Z"
+    },
+    {
+      "id": 20,
+      "projectId": 4,
+      "title": "Task D5",
+      "assignee": null,
+      "status": "todo",
+      "dueDate": "2026-07-20T17:49:36.328Z"
     }
   ]
 }
