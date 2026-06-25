@@ -15,7 +15,7 @@ export interface Project {
   id: number;
   name: string;
   description: string | null;
-  taskNumber: number;
+  taskCount: number;
   status: ProjectStatus;
   createdAt: ISODateString;
 }
@@ -23,7 +23,7 @@ export interface Project {
 export interface Task {
   id: number;
   projectId: number;
-  name: string;
+  title: string;
   assignee: string | null;
   status: TaskStatus;
   dueDate: ISODateString;

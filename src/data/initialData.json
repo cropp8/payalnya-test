@@ -1,0 +1,22 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "name": "Example Project",
+      "descripton": "First task to try and get a feel of this app.",
+      "taskCount": 0,
+      "status": "active",
+      "createdAt": ""
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "projectId": 1,
+      "title": "First Task",
+      "assignee": null,
+      "status": "todo",
+      "dueDate": ""
+    }
+  ]
+}
