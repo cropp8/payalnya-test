@@ -1,14 +1,41 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter, type RouteLocationNormalizedLoaded } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
+
+type Crumb = {
+  label: string;
+  to: { name: string; params?: Record<string, string | number> } | string;
+};
 
 const breadcrumbs = computed(() => {
-  const crumbs = [];
+  const crumbs: Crumb[] = [];
+  const currentRoute = route;
 
-  if (route.name !== 'projects') {
-    crumbs.push({ name: route.meta.title as string, path: route.path });
+  if (currentRoute.meta.breadcrumb) {
+    crumbs.push({ label: currentRoute.meta.breadcrumb(currentRoute), to: currentRoute.path });
+  }
+
+  let meta = currentRoute.meta;
+
+  while (meta.parent) {
+    const parentLocation = meta.parent(currentRoute);
+
+    if (!parentLocation) break;
+
+    const parentRoute = router.resolve(parentLocation);
+    const parentMeta = parentRoute.meta;
+
+    if (parentMeta.breadcrumb) {
+      crumbs.unshift({
+        label: parentMeta.breadcrumb(parentRoute as RouteLocationNormalizedLoaded),
+        to: parentLocation,
+      });
+    }
+
+    meta = parentMeta;
   }
 
   return crumbs;
@@ -20,19 +47,25 @@ const breadcrumbs = computed(() => {
     <nav class="ptt-breadcrumbs">
       <template
         v-for="(crumb, index) in breadcrumbs"
-        :key="crumb.path"
+        :key="index"
       >
+        <span
+          v-if="index > 0"
+          class="ptt-breadcrumbs__separator"
+        >
+          >
+        </span>
         <RouterLink
-          :to="crumb.path"
+          v-if="index < breadcrumbs.length - 1"
+          :to="crumb.to"
           class="ptt-link ptt-breadcrumbs__link"
-          >{{ crumb.name }}</RouterLink
+          >{{ crumb.label }}</RouterLink
         >
         <span
-          v-if="index < breadcrumbs.length - 1"
-          class="separator"
+          v-else
+          class="ptt-breadcrumbs__current"
+          >{{ crumb.label }}</span
         >
-          /
-        </span>
       </template>
     </nav>
   </header>

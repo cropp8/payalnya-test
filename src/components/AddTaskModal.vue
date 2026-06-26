@@ -2,23 +2,27 @@
 import { useForm, useField } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 
-import { projectSchema, type ProjectFormValues } from '@/schemas/projectSchema';
-import { ProjectStatus } from '@/types';
+import { taskSchema, type TaskFormValues } from '@/schemas/taskSchema';
+import { TaskStatus } from '@/types';
 
 const emit = defineEmits(['close', 'submit']);
 
-const { handleSubmit, resetForm } = useForm<ProjectFormValues>({
-  validationSchema: toTypedSchema(projectSchema),
+const { handleSubmit, resetForm } = useForm<TaskFormValues>({
+  validationSchema: toTypedSchema(taskSchema),
   initialValues: {
-    name: '',
+    title: '',
     description: '',
-    status: ProjectStatus.active,
+    assignee: '',
+    status: TaskStatus.todo,
+    dueDate: '',
   },
 });
 
-const { value: name, errorMessage: nameError } = useField<string>('name');
+const { value: title, errorMessage: titleError } = useField<string>('title');
 const { value: description, errorMessage: descriptionError } = useField<string>('description');
-const { value: status, errorMessage: statusError } = useField<ProjectStatus>('status');
+const { value: assignee, errorMessage: assigneeError } = useField<string>('assignee');
+const { value: status, errorMessage: statusError } = useField<TaskStatus>('status');
+const { value: dueDate, errorMessage: dueDateError } = useField<string>('dueDate');
 
 const onSubmit = handleSubmit((values) => {
   emit('submit', values);
@@ -32,18 +36,18 @@ const onSubmit = handleSubmit((values) => {
     @click.self="emit('close')"
   >
     <div class="modal-content">
-      <h2>Add Project</h2>
+      <h2>Add Task</h2>
 
       <form @submit="onSubmit">
         <div>
           <input
-            v-model="name"
-            placeholder="Project Name"
+            v-model="title"
+            placeholder="Task Title"
           />
           <span
-            v-if="nameError"
+            v-if="titleError"
             class="error"
-            >{{ nameError }}</span
+            >{{ titleError }}</span
           >
         </div>
 
@@ -60,14 +64,39 @@ const onSubmit = handleSubmit((values) => {
         </div>
 
         <div>
+          <input
+            v-model="assignee"
+            placeholder="Assignee (optional)"
+          />
+          <span
+            v-if="assigneeError"
+            class="error"
+            >{{ assigneeError }}</span
+          >
+        </div>
+
+        <div>
           <select v-model="status">
-            <option :value="ProjectStatus.active">Active</option>
-            <option :value="ProjectStatus.archived">Archived</option>
+            <option :value="TaskStatus.todo">To Do</option>
+            <option :value="TaskStatus.in_progress">In Progress</option>
+            <option :value="TaskStatus.done">Done</option>
           </select>
           <span
             v-if="statusError"
             class="error"
             >{{ statusError }}</span
+          >
+        </div>
+
+        <div>
+          <input
+            v-model="dueDate"
+            type="date"
+          />
+          <span
+            v-if="dueDateError"
+            class="error"
+            >{{ dueDateError }}</span
           >
         </div>
 

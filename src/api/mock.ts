@@ -86,6 +86,20 @@ mock.onGet('/tasks').reply((config) => {
   return [200, allTasks];
 });
 
+mock.onGet(taskUrlRegex).reply((config) => {
+  const match = config.url?.match(taskUrlRegex);
+  const id = match ? Number(match[1]) : null;
+
+  if (!id) {
+    return [400, { error: 'Invalid ID' }];
+  }
+
+  const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+  const task = tasks.find((t: Task) => t.id === id);
+
+  return task ? [200, task] : [404, { error: 'Task not found' }];
+});
+
 mock.onPost('/tasks').reply((config) => {
   const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
   const newTask = JSON.parse(config.data);

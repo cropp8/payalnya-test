@@ -88,6 +88,8 @@ export const apiServices = {
     getByProject: (projectId: number) =>
       get<Task[], { projectId: number }>('/tasks', { projectId }),
 
+    getById: (taskId: number) => get<Task>(`/tasks/${taskId}`),
+
     create: (data: Partial<Task>) => post<Task, Partial<Task>>('/tasks', data),
 
     update: (data: Partial<Task>, taskId: number) =>

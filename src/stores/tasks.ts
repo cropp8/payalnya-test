@@ -26,6 +26,27 @@ export const useTaskStore = defineStore('tasks', () => {
     }
   };
 
+  const fetchTask = async (taskId: number) => {
+    isLoading.value = true;
+
+    try {
+      const task = await apiServices.tasks.getById(taskId);
+      const index = tasks.value.findIndex((t) => t.id === taskId);
+
+      if (index !== -1) {
+        tasks.value[index] = task;
+      } else {
+        tasks.value.push(task);
+      }
+
+      return task;
+    } catch (error) {
+      handleStoreError(error, 'Error loading task.', toast);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   const createTask = async (taskData: Partial<Task>) => {
     try {
       const newTask = await apiServices.tasks.create(taskData);
@@ -94,6 +115,7 @@ export const useTaskStore = defineStore('tasks', () => {
     tasks,
     isLoading,
     fetchTasks,
+    fetchTask,
     createTask,
     updateTask,
     deleteTask,

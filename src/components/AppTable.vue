@@ -1,10 +1,10 @@
-<script setup lang="ts" generic="T extends { id: number; name: string; status: string }">
+<script setup lang="ts" generic="T extends { id: number }">
 import { ref, computed } from 'vue';
+import { RouterLink } from 'vue-router';
 
 import { useTableSort } from '@/composables/useTableSort';
-import { useTableFilter } from '@/composables/useTableFilter';
 import { useResizable } from '@/composables/useResizable';
-import type { ProjectStatus, TableColumn } from '@/types';
+import type { TableColumn } from '@/types';
 
 const props = defineProps<{
   items: T[];
@@ -12,17 +12,8 @@ const props = defineProps<{
   isLoading: boolean;
 }>();
 
-const searchQuery = ref('');
-const filterStatus = ref<ProjectStatus | ''>('');
-
 const itemsRef = computed(() => props.items);
-const { filteredData } = useTableFilter(itemsRef, searchQuery, filterStatus);
-const { sortedData, sortKey, sortOrder, setSort } = useTableSort<T>(filteredData);
-
-const resetFilters = () => {
-  searchQuery.value = '';
-  filterStatus.value = '';
-};
+const { sortedData, sortKey, sortOrder, setSort } = useTableSort<T>(itemsRef);
 
 const tableRef = ref<HTMLTableElement>();
 useResizable(tableRef);
@@ -31,22 +22,6 @@ const sortOrderIndicator = computed(() => (sortOrder.value === 'asc' ? '↑' : '
 </script>
 
 <template>
-  <div class="ptt-controls">
-    <input
-      v-model="searchQuery"
-      placeholder="Search by name..."
-      type="text"
-    />
-
-    <select v-model="filterStatus">
-      <option value="">All Statuses</option>
-      <option value="active">Active</option>
-      <option value="archived">Archived</option>
-    </select>
-
-    <button @click="resetFilters">Reset</button>
-  </div>
-
   <div v-if="isLoading">Loading...</div>
 
   <table
@@ -77,7 +52,12 @@ const sortOrderIndicator = computed(() => (sortOrder.value === 'asc' ? '↑' : '
           v-for="col in columns"
           :key="String(col.key)"
         >
-          {{ col.format ? col.format(item[col.key]) : item[col.key] }}
+          <RouterLink v-if="col.routeTo" :to="col.routeTo(item)">
+            {{ col.format ? col.format(item[col.key]) : item[col.key] }}
+          </RouterLink>
+          <template v-else>
+            {{ col.format ? col.format(item[col.key]) : item[col.key] }}
+          </template>
         </td>
       </tr>
     </tbody>

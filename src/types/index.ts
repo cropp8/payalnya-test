@@ -1,3 +1,5 @@
+import type { RouteLocationNormalizedLoaded, RouteLocationRaw } from 'vue-router';
+
 type ISODateString = string;
 
 export enum ProjectStatus {
@@ -24,6 +26,7 @@ export interface Task {
   id: number;
   projectId: number;
   title: string;
+  description: string | null;
   assignee: string | null;
   status: TaskStatus;
   dueDate: ISODateString;
@@ -34,4 +37,12 @@ export type TableColumn<T> = {
   label: string;
   width?: number;
   format?: (value: T[keyof T]) => string;
+  routeTo?: (item: T) => RouteLocationRaw;
 };
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    breadcrumb?: (route: RouteLocationNormalizedLoaded) => string;
+    parent?: (route: RouteLocationNormalizedLoaded) => { name: string; params?: Record<string, string | number> } | null;
+  }
+}
