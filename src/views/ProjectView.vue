@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
@@ -19,13 +19,13 @@ const VIEW_MODE_KEY = 'project-view-mode';
 type ViewMode = 'table' | 'kanban';
 
 const route = useRoute();
-const projectId = Number(route.params.id);
+const projectId = computed(() => Number(route.params.id));
 
 const taskStore = useTaskStore();
 const projectStore = useProjectStore();
 const { tasks, isLoading } = storeToRefs(taskStore);
 
-const project = computed(() => projectStore.projects.find((p) => p.id === projectId));
+const project = computed(() => projectStore.projects.find((p) => p.id === projectId.value));
 
 const viewMode = ref<ViewMode>((localStorage.getItem(VIEW_MODE_KEY) as ViewMode) ?? 'table');
 const isTaskModalOpen = ref(false);
@@ -60,7 +60,7 @@ const handleAddTask = async (values: TaskFormValues) => {
       ...values,
       description: values.description ?? null,
       assignee: values.assignee || null,
-      projectId,
+      projectId: projectId.value,
     });
     isTaskModalOpen.value = false;
   } catch (_) {}
@@ -68,14 +68,18 @@ const handleAddTask = async (values: TaskFormValues) => {
 
 const handleEditProject = async (values: ProjectFormValues) => {
   try {
-    await projectStore.updateProject(projectId, values);
+    await projectStore.updateProject(projectId.value, values);
     isProjectModalOpen.value = false;
   } catch (_) {}
 };
 
-onMounted(async () => {
-  await taskStore.fetchTasks(projectId);
-});
+watch(
+  projectId,
+  async (id) => {
+    await taskStore.fetchTasks(id);
+  },
+  { immediate: true },
+);
 
 const columns: TableColumn<Task>[] = [
   { key: 'id', label: 'ID', width: 80, sortable: false },
