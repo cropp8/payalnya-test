@@ -1,5 +1,11 @@
-@import 'normalize.css/normalize.css';
-@import 'open-props/open-props.min.css';
+@use 'open-props/open-props.min.css';
+@use './reset.scss';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 body {
   font-family:
@@ -39,12 +45,13 @@ body {
 }
 
 .ptt-sidebar {
+  flex: 300px 0 0;
   padding: var(--size-px-3);
   background-color: var(--gray-4);
 }
 
 .ptt-main {
-  flex-grow: 1;
+  width: calc(100% - 300px - 16px);
   padding: var(--size-px-3) var(--size-px-3) var(--size-px-3) 0;
 }
 
@@ -90,19 +97,41 @@ body {
 }
 
 .ptt-heading {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: var(--size-px-3);
   color: var(--gray-7);
 }
 
 .ptt-table {
-  border-collapse: separate;
+  table-layout: fixed;
   width: 100%;
-  border-spacing: 0;
-  border-radius: 0;
-  text-align: left;
+  border-collapse: collapse;
 
   th,
   td {
-    border-bottom: 1px solid var(--gray-4);
-    padding: var(--size-px-3);
+    padding: var(--size-px-2);
+    border: 1px solid var(--gray-2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  th {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 7px;
+      cursor: col-resize;
+      z-index: 10;
+    }
   }
 }
