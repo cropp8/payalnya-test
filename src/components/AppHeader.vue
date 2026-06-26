@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 
 const breadcrumbs = computed(() => {
-  const crumbs = [{ name: 'Home', path: '/' }];
+  const crumbs = [];
 
   if (route.name !== 'projects') {
     crumbs.push({ name: route.meta.title as string, path: route.path });

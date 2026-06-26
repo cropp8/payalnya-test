@@ -1,40 +1,58 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 
 import { useProjectStore } from '@/stores/projects';
-import { type Project } from '@/types';
+import type { Project } from '@/types';
+import { formatDate } from '@/utils/dateFormatter';
+import { PROJECT_STATUS_LABELS } from '@/constants/statusLabels';
+import { useTableSort } from '@/composables/useTableSort';
 
 const projectStore = useProjectStore();
 
-const projects = ref<Project[]>([]);
+const { projects, isLoading } = storeToRefs(projectStore);
+const { sortedData, sortKey, sortOrder, setSort } = useTableSort<Project>(projects);
 
 onMounted(async () => {
   await projectStore.fetchProjects();
-
-  projects.value = projectStore.projects;
 });
 </script>
 
 <template>
   <div>
     <h1 class="ptt-heading">Projects</h1>
-    <table class="ptt-table">
+
+    <div v-if="isLoading">Loading projects...</div>
+
+    <table
+      v-else
+      class="ptt-table"
+    >
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Status</th>
-          <th>Created</th>
-          <th>Tasks</th>
+          <th @click="setSort('name')">
+            Name <span v-if="sortKey === 'name'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+          </th>
+          <th @click="setSort('status')">
+            Status <span v-if="sortKey === 'status'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+          </th>
+          <th @click="setSort('createdAt')">
+            Created
+            <span v-if="sortKey === 'createdAt'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+          </th>
+          <th @click="setSort('taskCount')">
+            Tasks <span v-if="sortKey === 'taskCount'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span>
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="project in projects"
+          v-for="project in sortedData"
           :key="project.id"
         >
           <td>{{ project.name }}</td>
-          <td>{{ project.status }}</td>
-          <td>{{ project.createdAt }}</td>
+          <td>{{ PROJECT_STATUS_LABELS[project.status] }}</td>
+          <td>{{ formatDate(project.createdAt) }}</td>
           <td>{{ project.taskCount }}</td>
         </tr>
       </tbody>
