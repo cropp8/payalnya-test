@@ -5,11 +5,17 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { projectSchema, type ProjectFormValues } from '@/schemas/projectSchema';
 import { ProjectStatus } from '@/types';
 
+const props = defineProps<{
+  initialValues?: ProjectFormValues;
+}>();
+
 const emit = defineEmits(['close', 'submit']);
+
+const isEditing = !!props.initialValues;
 
 const { handleSubmit, resetForm } = useForm<ProjectFormValues>({
   validationSchema: toTypedSchema(projectSchema),
-  initialValues: {
+  initialValues: props.initialValues ?? {
     name: '',
     description: '',
     status: ProjectStatus.active,
@@ -28,80 +34,62 @@ const onSubmit = handleSubmit((values) => {
 
 <template>
   <div
-    class="modal-overlay"
+    class="ptt-modal__overlay"
     @click.self="emit('close')"
   >
-    <div class="modal-content">
-      <h2>Add Project</h2>
+    <div class="ptt-modal__content">
+      <h2 class="ptt-heading ptt-modal__title ptt-mb">{{ isEditing ? 'Edit Project' : 'Add Project' }}</h2>
 
-      <form @submit="onSubmit">
-        <div>
+      <form class="ptt-form" @submit="onSubmit">
+        <div class="ptt-form__field">
           <input
             v-model="name"
+            class="ptt-input"
             placeholder="Project Name"
           />
           <span
             v-if="nameError"
-            class="error"
+            class="ptt-modal__error"
             >{{ nameError }}</span
           >
         </div>
 
-        <div>
+        <div class="ptt-form__field">
           <textarea
             v-model="description"
+            class="ptt-textarea"
             placeholder="Description (optional)"
           />
           <span
             v-if="descriptionError"
-            class="error"
+            class="ptt-modal__error"
             >{{ descriptionError }}</span
           >
         </div>
 
-        <div>
-          <select v-model="status">
+        <div class="ptt-form__field">
+          <select v-model="status" class="ptt-select">
             <option :value="ProjectStatus.active">Active</option>
             <option :value="ProjectStatus.archived">Archived</option>
           </select>
           <span
             v-if="statusError"
-            class="error"
+            class="ptt-modal__error"
             >{{ statusError }}</span
           >
         </div>
 
-        <button type="submit">Create</button>
-        <button
-          type="button"
-          @click="emit('close')"
-        >
-          Cancel
-        </button>
+        <div class="ptt-form__actions">
+          <button type="submit" class="ptt-button">{{ isEditing ? 'Save' : 'Create' }}</button>
+          <button
+            type="button"
+            class="ptt-button ptt-button--secondary"
+            @click="emit('close')"
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   </div>
 </template>
-
-<style scoped>
-.error {
-  color: red;
-  font-size: 0.8rem;
-}
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-}
-</style>

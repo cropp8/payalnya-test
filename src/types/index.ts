@@ -30,12 +30,14 @@ export interface Task {
   assignee: string | null;
   status: TaskStatus;
   dueDate: ISODateString;
+  order: number;
 }
 
 export type TableColumn<T> = {
   key: keyof T;
   label: string;
   width?: number;
+  sortable?: boolean;
   format?: (value: T[keyof T]) => string;
   routeTo?: (item: T) => RouteLocationRaw;
 };

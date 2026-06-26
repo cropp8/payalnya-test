@@ -95,6 +95,9 @@ export const apiServices = {
     update: (data: Partial<Task>, taskId: number) =>
       put<Task, Partial<Task>>(`/tasks/${taskId}`, data),
 
+    reorder: (tasks: Pick<Task, 'id' | 'order'>[]) =>
+      Promise.all(tasks.map((t) => put<Task, Partial<Task>>(`/tasks/${t.id}`, { order: t.order }))),
+
     delete: (taskId: number) => del<Task>(`/tasks/${taskId}`),
   },
 };

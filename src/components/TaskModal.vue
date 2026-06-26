@@ -5,11 +5,17 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { taskSchema, type TaskFormValues } from '@/schemas/taskSchema';
 import { TaskStatus } from '@/types';
 
+const props = defineProps<{
+  initialValues?: TaskFormValues;
+}>();
+
 const emit = defineEmits(['close', 'submit']);
+
+const isEditing = !!props.initialValues;
 
 const { handleSubmit, resetForm } = useForm<TaskFormValues>({
   validationSchema: toTypedSchema(taskSchema),
-  initialValues: {
+  initialValues: props.initialValues ?? {
     title: '',
     description: '',
     assignee: '',
@@ -32,105 +38,89 @@ const onSubmit = handleSubmit((values) => {
 
 <template>
   <div
-    class="modal-overlay"
+    class="ptt-modal__overlay"
     @click.self="emit('close')"
   >
-    <div class="modal-content">
-      <h2>Add Task</h2>
+    <div class="ptt-modal__content">
+      <h2 class="ptt-heading ptt-modal__title ptt-mb">{{ isEditing ? 'Edit Task' : 'Add Task' }}</h2>
 
-      <form @submit="onSubmit">
-        <div>
+      <form class="ptt-form" @submit="onSubmit">
+        <div class="ptt-form__field">
           <input
             v-model="title"
+            class="ptt-input"
             placeholder="Task Title"
           />
           <span
             v-if="titleError"
-            class="error"
+            class="ptt-modal__error"
             >{{ titleError }}</span
           >
         </div>
 
-        <div>
+        <div class="ptt-form__field">
           <textarea
             v-model="description"
+            class="ptt-textarea"
             placeholder="Description (optional)"
           />
           <span
             v-if="descriptionError"
-            class="error"
+            class="ptt-modal__error"
             >{{ descriptionError }}</span
           >
         </div>
 
-        <div>
+        <div class="ptt-form__field">
           <input
             v-model="assignee"
+            class="ptt-input"
             placeholder="Assignee (optional)"
           />
           <span
             v-if="assigneeError"
-            class="error"
+            class="ptt-modal__error"
             >{{ assigneeError }}</span
           >
         </div>
 
-        <div>
-          <select v-model="status">
+        <div class="ptt-form__field">
+          <select v-model="status" class="ptt-select">
             <option :value="TaskStatus.todo">To Do</option>
             <option :value="TaskStatus.in_progress">In Progress</option>
             <option :value="TaskStatus.done">Done</option>
           </select>
           <span
             v-if="statusError"
-            class="error"
+            class="ptt-modal__error"
             >{{ statusError }}</span
           >
         </div>
 
-        <div>
+        <div class="ptt-form__field">
           <input
             v-model="dueDate"
+            class="ptt-input"
             type="date"
           />
           <span
             v-if="dueDateError"
-            class="error"
+            class="ptt-modal__error"
             >{{ dueDateError }}</span
           >
         </div>
 
-        <button type="submit">Create</button>
-        <button
-          type="button"
-          @click="emit('close')"
-        >
-          Cancel
-        </button>
+        <div class="ptt-form__actions">
+          <button type="submit" class="ptt-button">{{ isEditing ? 'Save' : 'Create' }}</button>
+          <button
+            type="button"
+            class="ptt-button ptt-button--secondary"
+            @click="emit('close')"
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   </div>
 </template>
-
-<style scoped>
-.error {
-  color: red;
-  font-size: 0.8rem;
-}
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-}
-</style>

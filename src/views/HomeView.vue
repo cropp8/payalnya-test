@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useProjectStore } from '@/stores/projects';
 import { PROJECT_STATUS_LABELS } from '@/constants/statusLabels';
 import { formatDate } from '@/utils/dateFormatter';
-import { useTableFilter } from '@/composables/useTableFilter';
 import AppTable from '@/components/AppTable.vue';
 import type { Project, TableColumn, ProjectStatus } from '@/types';
 
@@ -14,7 +13,15 @@ const { projects, isLoading } = storeToRefs(projectStore);
 
 const searchQuery = ref('');
 const filterStatus = ref<ProjectStatus | ''>('');
-const { filteredData } = useTableFilter(projects, searchQuery, filterStatus);
+
+const filteredProjects = computed(() =>
+  projects.value.filter((project) => {
+    const matchesSearch = project.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+    const matchesStatus = !filterStatus.value || project.status === filterStatus.value;
+
+    return matchesSearch && matchesStatus;
+  }),
+);
 
 const resetFilters = () => {
   searchQuery.value = '';
@@ -35,26 +42,27 @@ const columns: TableColumn<Project>[] = [
 
 <template>
   <div>
-    <h1 class="ptt-heading">Projects</h1>
+    <h1 class="ptt-heading ptt-mb">Projects</h1>
 
-    <div class="ptt-controls">
+    <div class="ptt-controls ptt-mb">
       <input
         v-model="searchQuery"
+        class="ptt-input"
         placeholder="Search by name..."
         type="text"
       />
 
-      <select v-model="filterStatus">
+      <select v-model="filterStatus" class="ptt-select">
         <option value="">All Statuses</option>
         <option value="active">Active</option>
         <option value="archived">Archived</option>
       </select>
 
-      <button @click="resetFilters">Reset</button>
+      <button class="ptt-button ptt-button--secondary" @click="resetFilters">Reset</button>
     </div>
 
     <AppTable
-      :items="filteredData"
+      :items="filteredProjects"
       :columns="columns"
       :is-loading="isLoading"
     />

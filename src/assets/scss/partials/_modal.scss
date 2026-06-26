@@ -1,0 +1,29 @@
+.ptt-modal {
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+
+  &__content {
+    background: var(--gray-0);
+    padding: var(--size-px-4);
+    border-radius: var(--radius-3);
+    min-width: 400px;
+  }
+
+  &__title {
+  }
+
+  &__error {
+    color: var(--red-6);
+    font-size: var(--font-size-0);
+  }
+}

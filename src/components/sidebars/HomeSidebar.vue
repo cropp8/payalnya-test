@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 
 import { useProjectStore } from '@/stores/projects';
-import AddProjectModal from '@/components/AddProjectModal.vue';
+import ProjectModal from '@/components/ProjectModal.vue';
 import type { ProjectFormValues } from '@/schemas/projectSchema';
 
 const projectStore = useProjectStore();
@@ -19,9 +19,9 @@ const handleAddProject = async (values: ProjectFormValues) => {
 </script>
 
 <template>
-  <button @click="isModalOpen = true">Add Project</button>
+  <button class="ptt-button" @click="isModalOpen = true">Add Project</button>
 
-  <AddProjectModal
+  <ProjectModal
     v-if="isModalOpen"
     @close="isModalOpen = false"
     @submit="handleAddProject"

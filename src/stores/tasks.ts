@@ -111,6 +111,19 @@ export const useTaskStore = defineStore('tasks', () => {
     }
   };
 
+  const reorderTasks = async (reordered: Task[]) => {
+    const previousTasks = [...tasks.value];
+
+    tasks.value = reordered.map((task, index) => ({ ...task, order: index }));
+
+    try {
+      await apiServices.tasks.reorder(tasks.value.map((t) => ({ id: t.id, order: t.order })));
+    } catch (error) {
+      tasks.value = previousTasks;
+      handleStoreError(error, 'Error reordering tasks.', toast);
+    }
+  };
+
   return {
     tasks,
     isLoading,
@@ -118,6 +131,7 @@ export const useTaskStore = defineStore('tasks', () => {
     fetchTask,
     createTask,
     updateTask,
+    reorderTasks,
     deleteTask,
   };
 });

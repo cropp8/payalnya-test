@@ -1,0 +1,32 @@
+.ptt-table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--size-px-2);
+    border: 1px solid var(--gray-2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  th {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 7px;
+      cursor: col-resize;
+      z-index: 10;
+    }
+  }
+}

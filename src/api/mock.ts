@@ -78,12 +78,14 @@ mock.onGet('/tasks').reply((config) => {
   const projectId = config.params?.projectId;
 
   if (projectId) {
-    const filteredTasks = allTasks.filter((task: Task) => task.projectId === Number(projectId));
+    const filteredTasks = allTasks
+      .filter((task: Task) => task.projectId === Number(projectId))
+      .sort((a: Task, b: Task) => a.order - b.order);
 
     return [200, filteredTasks];
   }
 
-  return [200, allTasks];
+  return [200, allTasks.sort((a: Task, b: Task) => a.order - b.order)];
 });
 
 mock.onGet(taskUrlRegex).reply((config) => {
@@ -104,7 +106,8 @@ mock.onPost('/tasks').reply((config) => {
   const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
   const newTask = JSON.parse(config.data);
 
-  newTask.id = Date.now(); // @TODO: move to helpers?
+  newTask.id = Date.now();
+  newTask.order = tasks.length;
 
   tasks.push(newTask);
   localStorage.setItem('tasks', JSON.stringify(tasks));
