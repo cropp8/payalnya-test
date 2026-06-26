@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import draggable from 'vuedraggable-es';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Draggable = draggable as any;
 
 import { useTaskStore } from '@/stores/tasks';
 import { TaskStatus } from '@/types';
@@ -43,7 +45,7 @@ const columnModels = {
     >
       <h3 class="ptt-heading ptt-kanban__column-title">{{ TASK_STATUS_LABELS[status] }}</h3>
 
-      <draggable
+      <Draggable
         v-model="columnModels[status].value"
         group="tasks"
         item-key="id"
@@ -64,7 +66,7 @@ const columnModels = {
             >
           </div>
         </template>
-      </draggable>
+      </Draggable>
     </div>
   </div>
 </template>
