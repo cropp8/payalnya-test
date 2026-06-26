@@ -42,7 +42,6 @@ const sortOrderIndicator = computed(() => (sortOrder.value === 'asc' ? '↑' : '
           {{ col.label }}
           <span v-if="sortKey === col.key && col.sortable !== false">{{ sortOrderIndicator }}</span>
           <div
-            v-if="col.sortable !== false"
             class="ptt-table__resizer"
             @click.stop
           />
@@ -58,7 +57,11 @@ const sortOrderIndicator = computed(() => (sortOrder.value === 'asc' ? '↑' : '
           v-for="col in columns"
           :key="String(col.key)"
         >
-          <RouterLink v-if="col.routeTo" class="ptt-link" :to="col.routeTo(item)">
+          <RouterLink
+            v-if="col.routeTo"
+            class="ptt-link"
+            :to="col.routeTo(item)"
+          >
             {{ col.format ? col.format(item[col.key]) : item[col.key] }}
           </RouterLink>
           <template v-else>
