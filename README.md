@@ -1,42 +1,73 @@
-# payalnya-test
+# SPA «Управління проектами і завданнями»
 
-This template should help get you started developing with Vue 3 in Vite.
+## Live Demo (Демонстрація)
 
-## Recommended IDE Setup
+🔗 https://payalnya-test.netlify.app/
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Локальний запуск
 
-## Recommended Browser Setup
+Bash
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
 ```
-
-### Compile and Hot-Reload for Development
-
-```sh
+npm install
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+## Технологічний стек
 
-```sh
-npm run build
-```
+Vue 3 · TypeScript · Pinia · Axios + axios-mock-adapter · SCSS + Open Props · vee-validate + Zod · vuedraggable-es · vue-toastification
+
+## Архітектурні рішення
+
+### API-шар (`src/api/`)
+
+Axios використовується для всіх операцій з даними, незважаючи на відсутність реального бекенду. `client.ts` ініціалізує екземпляр Axios, `mock.ts` перехоплює кожен запит через `axios-mock-adapter` і читає/записує дані в `localStorage` з імітацією затримки у 200 мс, а `services.ts` надає повністю типізований через дженерики API (`get<T>`, `post<T, D>` тощо). Уся обробка помилок централізована тут — компоненти та стори ніколи не працюють з необробленими помилками Axios.
+
+### Управління станом (`src/stores/`)
+
+Два окремі стори Pinia — `projects.ts` та `tasks.ts` — кожен відповідає за свою частину даних та всі CRUD операції. Де це доцільно, використовуються оптимістичні оновлення (наприклад, зміна порядку завдань, видалення) із відкотом у разі помилки. Toast-сповіщення викликаються безпосередньо з екшенів стора, завдяки чому компоненти (views) залишаються чистими від цієї логіки.
+
+### Компонентна структура (`src/components/`)
+
+- **`AppTable.vue`** — універсальна (`generic="T extends { id: number }"`), перевикористовувана таблиця з керуванням сортуванням на рівні колонок, можливістю зміни ширини колонок (через `useResizable`), та опціональними комірками `RouterLink`, що керуються конфігурацією колонок `routeTo`. Використовується як для проектів, так і для завдань, не містить специфічної для домену логіки.
+- **`KanbanBoard.vue`** — Kanban-дошка на три колонки, реалізована за допомогою `vuedraggable-es`. Перетягування між колонками реактивно змінює статус та порядок завдання через Pinia store, що означає, що таблиця та Kanban-дошка завжди повністю синхронізовані.
+- **`ProjectModal` / `TaskModal`** — модальні вікна подвійного призначення (створення/редагування). Режим редагування активується передачею `initialValues`. Валідація обробляється схемами vee-validate + Zod, помилки відображаються при втраті фокусу (blur).
+- **Бокові панелі / Sidebars (`src/components/sidebars/`)** — кожен маршрут має свій компонент бокової панелі. `HomeSidebar` має кнопку додавання проекту, `ProjectSidebar` виводить список усіх проектів як навігаційні посилання (завантажуючи їх, якщо стор порожній при прямому переході за URL), `TaskSidebar` показує назву та опис батьківського проекту.
+
+### Composables (Хуки) (`src/composables/`)
+
+- **`useTableSort`** — універсальна логіка сортування, яка приймає `Ref<T[]>` і повертає відсортований computed масив, поточний ключ і порядок сортування, а також функцію перемикання `setSort`.
+- **`useResizable`** — додає обробники `mousedown` до `div` елементів `.ptt-table__resizer` всередині кожного `<th>`, дозволяючи змінювати ширину колонки перетягуванням, не блокуючи при цьому клік для сортування по заголовку.
+
+### Маршрутизація (`src/router/`)
+
+Пласка структура маршрутів (`/`, `/projects/:id`, `/tasks/:id`) з іменованими слотами бокової панелі для кожного маршруту через механізм _named views_ у Vue Router. Кожен маршрут визначає резолвер `breadcrumb` та опціональний резолвер `parent`, щоб `AppHeader` міг побудувати повний ланцюжок `Проекти › Назва проекту › Назва завдання` без використання вкладених маршрутів — зберігаючи при цьому стабільні URL-адреси завдань, якими зручно ділитися.
+
+### Схеми (`src/schemas/`)
+
+Схеми Zod для значень форм `Project` та `Task`, які автоматично виводяться (inferred) у типи `ProjectFormValues` та `TaskFormValues`. Єдине джерело істини для правил валідації, спільне для схеми та vee-validate.
+
+### Стилізація
+
+SCSS з CSS-змінними Open Props по всьому проекту. Глобальні стилі розбиті на модулі (partials) у `src/assets/scss/partials/` — один файл для кожної логічної частини (`_layout`, `_table`, `_modal`, `_kanban`, `_reusables`, `_toast`). В компонентах немає жорстко закодованих значень кольорів або відступів.
+
+## TypeScript
+
+Сувора типізація по всьому проекту без використання `any`, за винятком одного обґрунтованого випадку:
+
+- **`vuedraggable-es`** — бібліотека не надає типізації для своїх слотів під капотом. Компонент примусово приводиться до `any` (`const Draggable = draggable as any`) виключно для того, щоб приховати помилку відсутності слоту `#item` у шаблоні. Усі дані, що проходять через слот, суворо типізуються в місці їх використання.
+
+## Компроміси та відомі обмеження (Trade-offs & Limitations)
+
+З огляду на великий обсяг тестового завдання та мету виконати його в розумні терміни, наступні аспекти були свідомо деприорітизовані:
+
+- **Адаптивний дизайн** — макет оптимізовано виключно для десктопів. Адаптація під мобільні пристрої та планшети виходила за рамки пріоритетів.
+- **Анімації** — не використовувались обгортки Vue `<Transition>`, щоб зосередити весь час на бізнес-логіці, стабільності роботи та архітектурі.
+- **Покриття тестами** — відсутні unit та e2e тести. В умовах обмеженого часу пріоритет було надано архітектурній цілісності та суворій типізації (TypeScript).
+
+## Плани на майбутнє (Future Improvements)
+
+1.  Адаптивний макет для мобільних пристроїв та планшетів.
+2.  Додавання анімацій `<Transition>` при перетягуванні карток у Kanban та зміні маршрутів.
+3.  Unit-тести за допомогою Vitest та e2e тести з Cypress або Playwright.
+4.  Збереження стану фільтрів/сортування для кожної сторінки в `localStorage`.
