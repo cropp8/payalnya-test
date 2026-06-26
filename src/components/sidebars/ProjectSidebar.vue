@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useProjectStore } from '@/stores/projects';
 
 const projectStore = useProjectStore();
 const { projects } = storeToRefs(projectStore);
+
+onMounted(async () => {
+  if (!projects.value.length) {
+    await projectStore.fetchProjects();
+  }
+});
 </script>
 
 <template>

@@ -7,36 +7,23 @@ export function useResizable(tableRef: Ref<HTMLTableElement | undefined>) {
   let absorbColumnIndex = 0;
   let headerCells: HTMLTableCellElement[] = [];
 
-  const onMouseDown = (e: MouseEvent) => {
+  const onResizerMouseDown = (e: MouseEvent, cellIndex: number) => {
     if (!tableRef.value?.rows[0]?.cells) return;
 
-    const targetTh = (e.target as HTMLElement).closest('th');
+    startX = e.clientX;
+    activeCellIndex = cellIndex;
+    absorbColumnIndex = cellIndex + 1;
+    headerCells = Array.from(tableRef.value.rows[0].cells);
 
-    if (!targetTh) {
-      return;
-    }
+    if (absorbColumnIndex >= headerCells.length) return;
 
-    if (e.offsetX > targetTh.offsetWidth - 8) {
-      startX = e.clientX;
-      activeCellIndex = targetTh.cellIndex;
-      absorbColumnIndex = activeCellIndex + 1;
-      headerCells = Array.from(tableRef.value.rows[0].cells);
+    initialColumnWidths = headerCells.map((cell) => cell.offsetWidth);
 
-      if (absorbColumnIndex >= headerCells.length) {
-        activeCellIndex = null;
+    headerCells.forEach((cell, i) => {
+      cell.style.width = `${initialColumnWidths[i]}px`;
+    });
 
-        return;
-      }
-
-      initialColumnWidths = headerCells.map((cell) => cell.offsetWidth);
-      console.log(initialColumnWidths);
-
-      headerCells.forEach((cell, i) => {
-        cell.style.width = `${initialColumnWidths[i]}px`;
-      });
-
-      document.body.style.userSelect = 'none';
-    }
+    document.body.style.userSelect = 'none';
   };
 
   const onMouseMove = (e: MouseEvent) => {
@@ -51,9 +38,7 @@ export function useResizable(tableRef: Ref<HTMLTableElement | undefined>) {
     const width1 = initialColumnWidths[index1];
     const width2 = initialColumnWidths[index2];
 
-    if (!cell1 || !cell2 || width1 === undefined || width2 === undefined) {
-      return;
-    }
+    if (!cell1 || !cell2 || width1 === undefined || width2 === undefined) return;
 
     const newWidth = Math.max(width1 - diffX, 40);
 
@@ -68,15 +53,25 @@ export function useResizable(tableRef: Ref<HTMLTableElement | undefined>) {
     }
   };
 
+  const attachResizers = (table: HTMLTableElement) => {
+    const cells = Array.from(table.rows[0]?.cells ?? []);
+
+    cells.forEach((cell, index) => {
+      const resizer = cell.querySelector('.ptt-table__resizer');
+
+      if (resizer) {
+        resizer.addEventListener('mousedown', (e) =>
+          onResizerMouseDown(e as MouseEvent, index),
+        );
+      }
+    });
+  };
+
   watch(
     tableRef,
-    (newTable, oldTable) => {
-      if (oldTable) {
-        oldTable.removeEventListener('mousedown', onMouseDown);
-      }
-
+    (newTable) => {
       if (newTable) {
-        newTable.addEventListener('mousedown', onMouseDown);
+        attachResizers(newTable);
       }
     },
     { immediate: true },
@@ -86,10 +81,6 @@ export function useResizable(tableRef: Ref<HTMLTableElement | undefined>) {
   document.addEventListener('mouseup', onMouseUp);
 
   onBeforeUnmount(() => {
-    if (tableRef.value) {
-      tableRef.value.removeEventListener('mousedown', onMouseDown);
-    }
-
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
   });

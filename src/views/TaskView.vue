@@ -43,8 +43,8 @@ const handleEditTask = async (values: TaskFormValues) => {
     <h1 class="ptt-heading">{{ task.title }}</h1>
     <button class="ptt-button" @click="isModalOpen = true">Edit Task</button>
 
-    <p>{{ task.description ?? '—' }}</p>
-    <p>{{ task.assignee ?? '—' }}</p>
+    <p>{{ task.description ?? '-' }}</p>
+    <p>{{ task.assignee ?? '-' }}</p>
     <p>{{ TASK_STATUS_LABELS[task.status] }}</p>
     <p>{{ formatDate(task.dueDate) }}</p>
 

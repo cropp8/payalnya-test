@@ -1,6 +1,6 @@
 <template>
   <footer class="ptt-footer">
-    <div class="ptt-footer__block">Created by Svitlana Samoilenko | 26.06.2026</div>
+    <div class="ptt-footer__block">Coded by Svitlana Samoilenko | 26.06.2026</div>
     <div class="ptt-footer__block">
       <a
         href="https://www.linkedin.com/in/svsamoilenko/"

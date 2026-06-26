@@ -41,6 +41,11 @@ const sortOrderIndicator = computed(() => (sortOrder.value === 'asc' ? '↑' : '
         >
           {{ col.label }}
           <span v-if="sortKey === col.key && col.sortable !== false">{{ sortOrderIndicator }}</span>
+          <div
+            v-if="col.sortable !== false"
+            class="ptt-table__resizer"
+            @click.stop
+          />
         </th>
       </tr>
     </thead>

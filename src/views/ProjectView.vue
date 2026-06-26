@@ -91,7 +91,7 @@ const columns: TableColumn<Task>[] = [
     label: 'Assignee',
     width: 150,
     sortable: false,
-    format: (v) => (v as string | null) ?? '—',
+    format: (v) => (v as string | null) ?? '-',
   },
   {
     key: 'status',
