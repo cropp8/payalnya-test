@@ -28,3 +28,10 @@ export interface Task {
   status: TaskStatus;
   dueDate: ISODateString;
 }
+
+export type TableColumn<T> = {
+  key: keyof T;
+  label: string;
+  width?: number;
+  format?: (value: T[keyof T]) => string;
+};

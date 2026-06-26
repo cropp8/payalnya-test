@@ -5,6 +5,7 @@ import { useToast } from 'vue-toastification';
 import { apiServices } from '@/api/services';
 import type { Project } from '@/types';
 import { handleStoreError } from '@/utils/errorHelper';
+import type { ProjectFormValues } from '@/schemas/projectSchema';
 
 export const useProjectStore = defineStore('projects', () => {
   const projects = ref<Project[]>([]);
@@ -85,6 +86,16 @@ export const useProjectStore = defineStore('projects', () => {
     }
   };
 
+  const addProject = async (payload: ProjectFormValues) => {
+    const newProject: Partial<Project> = {
+      ...payload,
+      createdAt: new Date().toISOString(),
+      taskCount: 0,
+    };
+
+    await createProject(newProject);
+  };
+
   return {
     projects,
     isLoading,
@@ -94,5 +105,6 @@ export const useProjectStore = defineStore('projects', () => {
     deleteProject,
     incrementTaskCount,
     decrementTaskCount,
+    addProject,
   };
 });
