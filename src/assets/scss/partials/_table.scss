@@ -32,4 +32,10 @@
       background-color: var(--teal-4);
     }
   }
+
+  &__label {
+    width: 120px;
+    font-weight: var(--font-weight-7);
+    color: var(--gray-6);
+  }
 }

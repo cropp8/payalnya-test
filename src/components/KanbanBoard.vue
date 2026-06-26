@@ -43,7 +43,7 @@ const columnModels = {
       :key="status"
       class="ptt-kanban__column"
     >
-      <h3 class="ptt-heading ptt-kanban__column-title">{{ TASK_STATUS_LABELS[status] }}</h3>
+      <h3 class="ptt-heading ptt-kanban__column-title ptt-mb">{{ TASK_STATUS_LABELS[status] }}</h3>
 
       <Draggable
         v-model="columnModels[status].value"

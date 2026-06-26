@@ -40,13 +40,29 @@ const handleEditTask = async (values: TaskFormValues) => {
   <div v-if="isLoading">Loading...</div>
 
   <div v-else-if="task">
-    <h1 class="ptt-heading">{{ task.title }}</h1>
-    <button class="ptt-button" @click="isModalOpen = true">Edit Task</button>
+    <div class="ptt-head ptt-mb">
+      <h1 class="ptt-heading">{{ task.title }}</h1>
+      <button class="ptt-button" @click="isModalOpen = true">Edit Task</button>
+    </div>
 
-    <p>{{ task.description ?? '-' }}</p>
-    <p>{{ task.assignee ?? '-' }}</p>
-    <p>{{ TASK_STATUS_LABELS[task.status] }}</p>
-    <p>{{ formatDate(task.dueDate) }}</p>
+    <p v-if="task.description" class="ptt-mb">{{ task.description }}</p>
+
+    <table class="ptt-table">
+      <tbody>
+        <tr>
+          <td class="ptt-table__label">Assignee</td>
+          <td>{{ task.assignee ?? '-' }}</td>
+        </tr>
+        <tr>
+          <td class="ptt-table__label">Status</td>
+          <td>{{ TASK_STATUS_LABELS[task.status] }}</td>
+        </tr>
+        <tr>
+          <td class="ptt-table__label">Due Date</td>
+          <td>{{ formatDate(task.dueDate) }}</td>
+        </tr>
+      </tbody>
+    </table>
 
     <TaskModal
       v-if="isModalOpen"
