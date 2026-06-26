@@ -19,7 +19,7 @@ mock.onPost('/projects').reply((config) => {
   const projects = JSON.parse(localStorage.getItem('projects') || '[]');
   const newProject = JSON.parse(config.data);
 
-  newProject.id = Date.now(); // @TODO: move to helpers?
+  newProject.id = Date.now();
   projects.push(newProject);
   localStorage.setItem('projects', JSON.stringify(projects));
 
